@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -22,11 +23,9 @@ public class LoginPage extends JFrame{
                 JFrame startPage = new StartPage("Start Page");
                 startPage.setVisible(true);
                 try{
-                    URL url = new URL("http://localhost:8080/login");
+                    URL url = new URL("http://localhost:8080/login?username=" + loginField.getText());
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                    con.setRequestMethod("GET");
-
-
+                    System.out.println(con.getResponseCode());
                 } catch (Exception exception) {
                     System.out.println(exception.getMessage());
                 }
