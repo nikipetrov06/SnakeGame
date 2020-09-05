@@ -3,9 +3,9 @@ import java.awt.*;
 
 public class Snake extends JFrame {
 
-    public Snake() {
+    public Snake(final User user) {
 
-        add(new Board());
+        add(new Board(user));
 
         setResizable(false);
         pack();

@@ -4,6 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class Board extends JPanel implements ActionListener {
 
@@ -32,8 +35,9 @@ public class Board extends JPanel implements ActionListener {
     private Image dot;
     private Image apple;
     private Image head;
+    private final User user;
 
-    public Board() {
+    public Board(User user) {
 
         addKeyListener(new TAdapter());
         setBackground(Color.black);
@@ -42,6 +46,7 @@ public class Board extends JPanel implements ActionListener {
         setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
         loadImages();
         initGame();
+        this.user = user;
     }
 
     private class TAdapter extends KeyAdapter {
@@ -90,13 +95,13 @@ public class Board extends JPanel implements ActionListener {
 
     private void loadImages() {
 
-        ImageIcon iid = new ImageIcon("src\\dot.png");
+        ImageIcon iid = new ImageIcon("C:\\Users\\Asus_ROG\\IdeaProjects\\SinglePlayerSnake\\SnakeGame\\src\\main\\java\\dot.png");
         dot = iid.getImage();
 
-        ImageIcon iia = new ImageIcon("src\\apple.png");
+        ImageIcon iia = new ImageIcon("C:\\Users\\Asus_ROG\\IdeaProjects\\SinglePlayerSnake\\SnakeGame\\src\\main\\java\\apple.png");
         apple = iia.getImage();
 
-        ImageIcon iih = new ImageIcon("src\\head.png");
+        ImageIcon iih = new ImageIcon("C:\\Users\\Asus_ROG\\IdeaProjects\\SinglePlayerSnake\\SnakeGame\\src\\main\\java\\head.png");
         head = iih.getImage();
     }
 
@@ -146,15 +151,27 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    private void gameOver(Graphics g) {
+    private void gameOver(Graphics g)  {
 
-        String msg = "Game Over";
+        String msg = "Game Over " + user.getUsername();
         Font small = new Font("Helvetica", Font.BOLD, 14);
         FontMetrics metr = getFontMetrics(small);
 
         g.setColor(Color.white);
         g.setFont(small);
         g.drawString(msg, (B_WIDTH - metr.stringWidth(msg)) / 2, B_HEIGHT / 2);
+
+        if (score > user.getHighScore()) {
+            try {
+                URL url = new URL("http://localhost:8080/update?id=" + user.getId() + "&highscore=" + score);
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("PUT");
+                int responseCode = con.getResponseCode();
+                System.out.println("GET Response Code :: " + responseCode);
+            } catch (Exception exception) {
+
+            }
+        }
     }
 
     private void checkApple() {
@@ -196,6 +213,7 @@ public class Board extends JPanel implements ActionListener {
 
             if ((z > 4) && (x[0] == x[z]) && (y[0] == y[z])) {
                 inGame = false;
+                break;
             }
         }
 
