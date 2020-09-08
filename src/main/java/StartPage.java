@@ -1,7 +1,11 @@
+import com.google.gson.Gson;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class StartPage extends JFrame{
     private JPanel startPage;
@@ -33,6 +37,28 @@ public class StartPage extends JFrame{
                 });
             }
         });
+        createLobby.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try{
+                    URL url = new URL("http://localhost:8080/create?userId=" + user.getId());
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    con.setRequestMethod("POST");
+                    int responseCode = con.getResponseCode();
+                    String response = LoginPage.getResponse(responseCode, con);
+                    Lobby lobby = null;
+                    if (responseCode == 200) {
+                        Gson gson = new Gson();
+                        lobby = gson.fromJson(response, Lobby.class);
+                        LobbyPage lobbyPage = new LobbyPage("Lobby Page", lobby);
+                        lobbyPage.getUserOne().setText(user.getUsername());
+                        lobbyPage.setVisible(true);
+                    }
+                } catch (Exception exception) {
+                    System.out.println(exception.getMessage());
+                }
+            }
+        });
     }
 
 
@@ -40,15 +66,9 @@ public class StartPage extends JFrame{
         return usernameField;
     }
 
-    public void setUsernameField(JTextField usernameField) {
-        this.usernameField = usernameField;
-    }
 
     public JTextField getHighScore() {
         return highScore;
     }
 
-    public void setHighScore(JTextField highScore) {
-        this.highScore = highScore;
-    }
 }

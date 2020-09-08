@@ -57,7 +57,7 @@ public class LoginPage extends JFrame{
         loginPage.setVisible(true);
     }
 
-    private String getResponse(int responseCode, HttpURLConnection con) throws IOException {
+    public static String getResponse(int responseCode, HttpURLConnection con) throws IOException {
         BufferedReader in = null;
         if (responseCode == HttpURLConnection.HTTP_OK) { // success
             in = new BufferedReader(new InputStreamReader(con.getInputStream()));
